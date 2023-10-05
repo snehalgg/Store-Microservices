@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Product Search</title>
+</head>
+<body>
+    <label for="productId">Enter Product ID: </label>
+    <input type="text" id="productId" />
+    <button onclick="searchProduct()">Search</button>
+
+    <table id="apiTable">
+        <thead>
+            <tr>
+                <th>Product ID</th>
+                <th>Product Name</th>
+                <th>Price</th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+
+    <script type="text/javascript">
+        ShowAllReservation();
+
+        function ShowAllReservation() {
+            var xhttp = new XMLHttpRequest();
+            xhttp.open("GET", "https://localhost:7125/api/Product", true);
+            xhttp.send();
+
+            xhttp.onreadystatechange = function () {
+                var tbody = document.getElementById("apiTable").querySelector("tbody");
+                tbody.innerHTML = "";
+
+                if (this.readyState == 4) {
+                    if (this.status == 200) {
+                        JSON.parse(this.responseText).forEach(function (data, index) {
+                            tbody.innerHTML += "<tr><td>" + data.productId + "</td>" + "<td>" + data.productName + "</td>" + "<td>" + data.price + "</td></tr>";
+                        });
+                    } else {
+                        // Handle error cases
+                        tbody.innerHTML = "<tr><td colspan='3'>Error retrieving data</td></tr>";
+                    }
+                }
+            };
+        }
+
+        function searchProduct() {
+            var productId = document.getElementById("productId").value;
+            if (!productId) {
+                alert("Please enter a Product ID.");
+                return;
+            }
+
+            var xhttp = new XMLHttpRequest();
+            xhttp.open("GET", "https://localhost:7125/api/Product/" + productId, true);
+            xhttp.send();
+
+            xhttp.onreadystatechange = function () {
+                var tbody = document.getElementById("apiTable").querySelector("tbody");
+                tbody.innerHTML = "";
+
+                if (this.readyState == 4) {
+                    if (this.status == 200) {
+                        var data = JSON.parse(this.responseText);
+                        if (data) {
+                            tbody.innerHTML += "<tr><td>" + data.productId + "</td>" + "<td>" + data.productName + "</td>" + "<td>" + data.price + "</td></tr>";
+                        } else {
+                            tbody.innerHTML = "<tr><td colspan='3'>Product not found</td></tr>";
+                        }
+                    } else {
+                        // Handle error cases
+                        tbody.innerHTML = "<tr><td colspan='3'>Error retrieving data</td></tr>";
+                    }
+                }
+            };
+        }
+    </script>
+     <!-- <script type="text/javascript">
+    ShowAllReservation();
+ 
+    function ShowAllReservation() {
+        var xhttp = new XMLHttpRequest();
+       xhttp.open("GET", "https://localhost:7125/api/Product", true);
+        //  xhttp.open("GET", "https://localhost:7178/api/Test", true);
+        xhttp.send();
+ 
+        xhttp.onreadystatechange = function () {
+            var tbody = document.getElementById("apiTable").querySelector("tbody");
+            tbody.innerHTML = "";
+            if (this.readyState == 4 && this.status == 200) {
+                JSON.parse(this.responseText).forEach(function (data, index) {
+                    tbody.innerHTML += "<tr><td>" + data.ProductId + "</td>" + "<td>" + data.ProductName + "</td>" + "<td>" + data.Price + "</td></tr>";
+                });
+            }
+        };
+    }
+</script>   -->
+</body>
+</html>
